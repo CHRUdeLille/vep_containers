@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# Christophe Demay <christophe.demay@chru-lille.fr>
+# 2018/05/11: initial version
+BootStrap: docker
+From: phusion/baseimage:0.10.1
+%labels
+  MAINTAINER christophe.demay@chru-lille.fr
+  VERSION 75
+
+%environment
+  PATH=/opt/vep/src/ensembl-tools-release-75/scripts/variant_effect_predictor/:$PATH
+  LC_ALL=en_US.UTF-8
+  LANGUAGE=en_US.UTF-8
+
+%help
+  __     _______ ____    _____ ____  
+  \ \   / / ____|  _ \  |___  | ___| 
+   \ \ / /|  _| | |_) |    / /|___ \ 
+    \ V / | |___|  __/    / /  ___) |
+     \_/  |_____|_|      /_/  |____/ 
+
+     Singularity container for VEP 75 <https://github.com/Ensembl/ensembl-tools/archive/release/75.zip> application. Documentation available at http://www.ensembl.org/info/docs/tools/vep/script/index.html
+     Cache folder is not included in the container. You have to bind folder containing the cache and add it with the '--cache' option.
+
+%post
+       apt-get update
+       apt-get -y install \
+         build-essential \
+         cpanminus \
+         curl \
+         wget \
+         unzip \
+         perl \
+         perl-base \
+         locales
+         
+       locale-gen en_US.UTF-8
+       export LANGUAGE=en_US.UTF-8
+       export LANG=en_US.UTF-8
+       export LC_ALL=en_US.UTF-8
+       locale-gen en_US.UTF-8
+       dpkg-reconfigure locales
+       # 
+       # cpanm DBI DBD::mysql
+       # 
+       mkdir -p /opt/vep/src
+       
+       
+       
+       cpanm Archive::Extract Archive::Zip CGI Bio::PrimarySeqI DBI
+       #LWP::Simple Bio::Perl LWP::Protocol::https
+       
+       cd /opt/vep/src
+       wget https://github.com/Ensembl/ensembl-tools/archive/release/75.zip
+       unzip 75.zip
+       
+       cd /opt/vep/src/ensembl-tools-release-75/scripts/variant_effect_predictor/
+       chmod u+x *.pl
+       ./INSTALL.pl -a a -b 'https://github.com/bioperl/bioperl-live/archive/bioperl-release-1-6-1.tar.gz'
+       
+       rm /opt/vep/src/75.zip
