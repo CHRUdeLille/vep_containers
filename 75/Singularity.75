@@ -20,7 +20,7 @@ From: phusion/baseimage:0.10.1
     \ V / | |___|  __/    / /  ___) |
      \_/  |_____|_|      /_/  |____/ 
 
-     Singularity container for VEP 75 <https://github.com/Ensembl/ensembl-tools/archive/release/75.zip> application. Documentation available at http://www.ensembl.org/info/docs/tools/vep/script/index.html
+     Singularity container for VEP 75 <https://github.com/Ensembl/ensembl-tools/archive/release/75.zip> application. Documentation available at http://grch37.ensembl.org/info/docs/tools/vep/index.html
      Cache folder is not included in the container. You have to bind folder containing the cache and add it with the '--cache' option.
 
 %post
@@ -56,6 +56,7 @@ From: phusion/baseimage:0.10.1
        unzip 75.zip
        
        cd /opt/vep/src/ensembl-tools-release-75/scripts/variant_effect_predictor/
+       ln -s variant_effect_predictor.pl vep
        chmod u+x *.pl
        ./INSTALL.pl -a a -b 'https://github.com/bioperl/bioperl-live/archive/bioperl-release-1-6-1.tar.gz'
        
